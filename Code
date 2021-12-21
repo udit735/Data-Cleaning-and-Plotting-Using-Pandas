@@ -1,0 +1,96 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+import glob
+
+files = glob.glob("states*.csv")
+df_list = []
+for filename in files:
+  data = pd.read_csv(filename)
+  df_list.append(data)
+
+df = pd.concat(df_list)
+# print(df.head())
+
+# print(df.columns)
+# print(df.dtypes)
+
+df["Income"] = df.Income.str[1:]
+df["Income"] = pd.to_numeric(df.Income)
+# print(df.dtypes)
+# print(df.head())
+
+GenderPop = df.GenderPop.str.split("_")
+df["MalePop"] = GenderPop.str.get(0)
+df["FemalePop"] = GenderPop.str.get(1)
+# print(df.head())
+
+df["MalePop"] = df.MalePop.str[:-1]
+df["FemalePop"] = df.FemalePop.str[:-1]
+
+df["MalePop"] = pd.to_numeric(df.MalePop)
+df["FemalePop"] = pd.to_numeric(df.FemalePop)
+# print(df.head())
+# print(df.dtypes)
+
+# Creating a scatter plot
+plt.scatter(df.FemalePop, df.Income)
+# plt.show()
+
+# print(df.FemalePop)
+df = df.fillna(value = {"FemalePop": df["TotalPop"] - df["MalePop"]})
+# print(df.FemalePop)
+
+# print(df.duplicated())
+df = df.drop_duplicates()
+# print(df.duplicated())
+
+plt.scatter(df.FemalePop, df.Income)
+# plt.show()
+
+# print(df.columns)
+# print(df.head())
+
+df["Hispanic"] = df.Hispanic.str[:-1]
+df["White"] = df.White.str[:-1]
+df["Black"] = df.Black.str[:-1]
+df["Native"] = df.Native.str[:-1]
+df["Asian"] = df.Asian.str[:-1]
+df["Pacific"] = df.Pacific.str[:-1]
+
+df["Hispanic"] = pd.to_numeric(df.Hispanic)
+df["White"] = pd.to_numeric(df.White)
+df["Black"] = pd.to_numeric(df.Black)
+df["Native"] = pd.to_numeric(df.Native)
+df["Asian"] = pd.to_numeric(df.Asian)
+df["Pacific"] = pd.to_numeric(df.Pacific)
+
+df["Hispanic"] = (df["Hispanic"] * df["TotalPop"])/100
+df["White"] = (df["White"] * df["TotalPop"])/100
+df["Black"] = (df["Black"] * df["TotalPop"])/100
+df["Native"] = (df["Native"] * df["TotalPop"])/100
+df["Asian"] = (df["Asian"] * df["TotalPop"])/100
+df["Pacific"] = (df["Pacific"] * df["TotalPop"])/100
+
+# print(df.head())
+
+plt.scatter(df.Hispanic, df.Income)
+# plt.show()
+
+plt.scatter(df.White, df.Income)
+# plt.show()
+
+plt.scatter(df.Black, df.Income)
+# plt.show()
+
+plt.scatter(df.Asian, df.Income)
+# plt.show()
+
+plt.scatter(df.Pacific, df.Income)
+# plt.show()
+
+plt.scatter(df.Native, df.Income)
+# plt.show()
+
+print(df.head())
